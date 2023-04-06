@@ -1,0 +1,26 @@
+.main {
+  align-self: center;
+  justify-self: center;
+
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  // grid-template-rows: auto 1fr auto;
+}
+
+.tasks {
+  list-style: none;
+
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+
+  a {
+    text-decoration: none;
+    color: black;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

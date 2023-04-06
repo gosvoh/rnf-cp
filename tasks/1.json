@@ -1,0 +1,13 @@
+{
+  "name": "1",
+  "task": "Что нужно смешать, чтобы получить голубой осадок Сu(OH)2?",
+  "video": "1_видео",
+  "practice": {
+    "combination": ["NaOH_верт", "CuSO4_верт"]
+  },
+  "test": {
+    "centralObject": "Cu(OH)2+NaSO4",
+    "molecules": ["крахмал_верт", "NaOH_верт", "H202_верт", "CuSO4_верт"],
+    "correctCombination": ["NaOH_верт", "CuSO4_верт"]
+  }
+}

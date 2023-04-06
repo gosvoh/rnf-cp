@@ -1,0 +1,13 @@
+{
+  "name": "2",
+  "task": "При взаимодействии каких 2-х реагентов получается экзотермическая реакция? (выделяется тепло)",
+  "video": "2_видео",
+  "practice": {
+    "combination": ["KMnO4", "Колбапустая", "Н2О2верт"]
+  },
+  "test": {
+    "centralObject": "KMnO4+H2O2",
+    "molecules": ["KMnO4", "H2O2", "HCl_верт", "Zn"],
+    "correctCombination": ["KMnO4", "H2O2"]
+  }
+}

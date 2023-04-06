@@ -1,0 +1,11 @@
+.main {
+  display: grid;
+
+  grid-template-rows: auto 1fr auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}

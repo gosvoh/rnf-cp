@@ -1,0 +1,13 @@
+{
+  "name": "10",
+  "task": "Что произойдёт с раствором NaOH + ф/ф, если к нему прилить кислоту?",
+  "video": "10_видео",
+  "practice": {
+    "combination": ["H2SO4_верт", "Ф.Ф + NaOH", "H2SO4+ф.ф.+NaOH"]
+  },
+  "test": {
+    "centralObject": "Ф.Ф + NaOH",
+    "molecules": ["синий", "желтый", "белый", "красный"],
+    "correctCombination": ["цвет_белый"]
+  }
+}

@@ -1,0 +1,6 @@
+/public/assets/video/10_видео.mp4 filter=lfs diff=lfs merge=lfs -text
+/public/assets/video/1_видео.mp4 filter=lfs diff=lfs merge=lfs -text
+/public/assets/video/3_видео.mp4 filter=lfs diff=lfs merge=lfs -text
+/public/assets/video/4_видео.mp4 filter=lfs diff=lfs merge=lfs -text
+/public/assets/video/6_видео.mp4 filter=lfs diff=lfs merge=lfs -text
+/public/assets/video/7_видео.mp4 filter=lfs diff=lfs merge=lfs -text

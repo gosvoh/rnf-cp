@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow-x: hidden;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  display: grid;
+  padding: 1rem;
+}
+
+main {
+  justify-self: center;
+  align-self: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-width: 75%;
+}

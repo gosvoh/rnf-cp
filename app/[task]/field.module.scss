@@ -1,0 +1,50 @@
+.field {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.25rem;
+  grid-auto-flow: column;
+  background-color: black;
+}
+
+.flask {
+  grid-area: 1 / 2 / -1 / -2;
+  background-color: red;
+}
+
+.flask,
+.molecule {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: white;
+}
+
+.molecule {
+  color: white;
+  cursor: pointer;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  * {
+    user-select: none;
+  }
+
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.selected {
+  outline: 5px solid red;
+  outline-offset: -5px;
+}
+
+.selectable {
+  outline: 5px solid blue;
+  outline-offset: -5px;
+  cursor: pointer;
+}
