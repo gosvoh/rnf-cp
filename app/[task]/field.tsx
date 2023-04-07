@@ -1,6 +1,6 @@
 import TaskType from "@/types/task";
 import styles from "./field.module.scss";
-import { Dispatch, MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useDoneTask } from "./customContext";
 
@@ -24,15 +24,6 @@ function switchImage(element: HTMLDivElement, molecule: string) {
     element.style.backgroundImage = `url("/assets/images/${molecule}.png")`;
 }
 
-// const colors = ["белый", "красный", "синий", "желтый", "розовый"];
-// enum colors {
-//   white = "белый",
-//   red = "красный",
-//   blue = "синий",
-//   yellow = "желтый",
-//   magenta = "розовый",
-// }
-
 const colors = new Map(
   Object.entries({
     белый: "white",
@@ -50,13 +41,12 @@ export default function Field({
   task: TaskType;
   type: "practice" | "test";
 }) {
-  const selRef = useRef<HTMLDivElement | null>(null);
-  const centralRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [consumed, setConsumed] = useState<string[]>([]);
+  const selectedRef = useRef<HTMLDivElement | null>(null);
+  const centralObjectRef = useRef<HTMLDivElement>(null);
+  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
+  const [consumedMolecules, setConsumedMolecules] = useState<string[]>([]);
   const [centralObject, setCentralObject] = useState<string>("Пробирка_пустая");
   const [done, setDone] = useDoneTask();
-  const [isColor, setIsColor] = useState(false);
 
   let molecules: string[], correctCombination: string[];
   if (type === "practice")
@@ -65,19 +55,10 @@ export default function Field({
 
   useEffect(() => {
     setCentralObject(task.test.centralObject);
-    setIsColor(
-      task.test.correctCombination.length === 1 &&
-        colors.has(task.test.correctCombination[0])
-    );
     return () => {
       deselect();
-      setIsColor(false);
     };
   }, [task]);
-
-  useEffect(() => {
-    console.log(isColor);
-  }, [isColor]);
 
   useEffect(() => {
     if (type === "practice") setCentralObject("Пробирка_пустая");
@@ -85,78 +66,68 @@ export default function Field({
   }, [type]);
 
   useEffect(() => {
-    if (isColor) return;
-    if (!selected) removeClassName(centralRef, styles.selectable);
-    else if (!centralRef.current?.className.includes(styles.selectable))
-      addClassName(centralRef, styles.selectable);
-  }, [selected]);
-
-  useEffect(() => {
-    if (!centralRef.current) return;
-    centralRef.current.style.backgroundImage = `url("/assets/images/${centralObject}.png")`;
+    if (!centralObjectRef.current) return;
+    centralObjectRef.current.style.backgroundImage = `url("/assets/images/${centralObject}.png")`;
   }, [centralObject]);
 
   useEffect(() => {
-    if (consumed.length === 1) {
-      if (selected && colors.has(selected))
-        setDone(task.test.correctCombination.includes(selected));
-      else setCentralObject(consumed[0]);
-    }
-    if (consumed.length !== 2) return;
+    if (consumedMolecules.length !== correctCombination.length) return;
 
     let done = false;
-    if (consumed.every((value) => task.test.correctCombination.includes(value)))
+    if (consumedMolecules.every((value) => correctCombination.includes(value)))
       done = true;
-    setConsumed([]);
 
+    setConsumedMolecules([]);
     setCentralObject(task.test.centralObject);
+    deselect();
 
     if (done) setDone(true);
-  }, [consumed]);
+  }, [consumedMolecules]);
 
   function select(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     molecule: string
   ) {
-    if (!event.currentTarget || !molecule || consumed.includes(molecule))
-      return;
+    if (!event.currentTarget || consumedMolecules.includes(molecule)) return;
 
-    if (colors.has(molecule)) {
-      setSelected(molecule);
-      setConsumed([molecule]);
+    if (correctCombination.length === 1) {
+      setConsumedMolecules([...consumedMolecules, molecule]);
+
       return;
     }
 
-    if (event.currentTarget === selRef.current) {
-      removeClassName(selRef, styles.selected);
-      switchImage(selRef.current, molecule);
-      selRef.current = null;
-      setSelected(null);
-    } else {
-      if (selRef.current) {
-        switchImage(selRef.current, selected as string);
-        removeClassName(selRef, styles.selected);
+    if (event.currentTarget === selectedRef.current) deselect();
+    else {
+      if (selectedRef.current) {
+        removeClassName(selectedRef, styles.highlight);
+        switchImage(selectedRef.current, selectedMolecule as string);
       }
-      selRef.current = event.currentTarget;
-      addClassName(selRef, styles.selected);
-      switchImage(selRef.current, molecule);
-      setSelected(molecule);
+
+      selectedRef.current = event.currentTarget;
+      switchImage(selectedRef.current, molecule);
+      addClassName(selectedRef, styles.highlight);
+      addClassName(centralObjectRef, styles.highlight);
+      setSelectedMolecule(molecule);
     }
   }
 
   function deselect() {
-    if (!selRef.current || !selected) return;
-    removeClassName(selRef, styles.selected);
-    removeClassName(centralRef, styles.selectable);
-    switchImage(selRef.current, selected);
-    setSelected(null);
-    selRef.current = null;
+    if (!selectedRef.current || !selectedMolecule) return;
+
+    removeClassName(selectedRef, styles.highlight);
+    removeClassName(centralObjectRef, styles.highlight);
+
+    switchImage(selectedRef.current, selectedMolecule);
+
+    setSelectedMolecule(null);
+    selectedRef.current = null;
   }
 
   function flaskClick() {
-    if (!selected || colors.has(selected)) return;
+    if (!selectedMolecule || correctCombination.length === 1) return;
 
-    setConsumed([...consumed, selected]);
+    setCentralObject(selectedMolecule);
+    setConsumedMolecules([...consumedMolecules, selectedMolecule]);
     deselect();
   }
 
@@ -172,9 +143,12 @@ export default function Field({
           <div
             key={molecule}
             className={styles.molecule}
-            aria-disabled={consumed.includes(molecule) && !colors.has(molecule)}
+            aria-disabled={
+              consumedMolecules.includes(molecule) && !colors.has(molecule)
+            }
             onClick={(event) => select(event, molecule)}
             style={
+              // TODO заменить background на Image
               colors.has(molecule)
                 ? { backgroundColor: colors.get(molecule) }
                 : { backgroundImage: `url("/assets/images/${molecule}.png")` }
@@ -182,7 +156,11 @@ export default function Field({
           ></div>
         );
       })}
-      <div className={styles.flask} ref={centralRef} onClick={flaskClick}></div>
+      <div
+        className={styles.flask}
+        ref={centralObjectRef}
+        onClick={flaskClick}
+      ></div>
     </div>
   );
 }

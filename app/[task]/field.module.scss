@@ -10,6 +10,12 @@
 .flask {
   grid-area: 1 / 2 / -1 / -2;
   background-color: red;
+
+  &.highlight {
+    outline: 5px solid blue;
+    outline-offset: -5px;
+    cursor: pointer;
+  }
 }
 
 .flask,
@@ -28,6 +34,11 @@
   justify-content: center;
   position: relative;
 
+  &.highlight {
+    outline: 5px solid red;
+    outline-offset: -5px;
+  }
+
   * {
     user-select: none;
   }
@@ -36,15 +47,4 @@
     cursor: not-allowed;
     opacity: 0.5;
   }
-}
-
-.selected {
-  outline: 5px solid red;
-  outline-offset: -5px;
-}
-
-.selectable {
-  outline: 5px solid blue;
-  outline-offset: -5px;
-  cursor: pointer;
 }

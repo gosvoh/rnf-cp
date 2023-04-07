@@ -3,3 +3,11 @@
 
   grid-template-rows: auto 1fr auto;
 }
+
+.control {
+  display: flex;
+
+  > * {
+    flex: 1;
+  }
+}

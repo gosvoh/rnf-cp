@@ -4,10 +4,7 @@ import Field from "./field";
 export default function Practice({ task }: { task: TaskType }) {
   return (
     <>
-      <div>
-        <p>{task.name}</p>
-        <p>{task.task}</p>
-      </div>
+      <p>{task.name}</p>
       <Field task={task} type="practice" />
     </>
   );

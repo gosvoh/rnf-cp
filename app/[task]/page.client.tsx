@@ -5,31 +5,29 @@ import Theory from "./theory";
 import TaskType from "@/types/task";
 import Practice from "./practice";
 import storage from "@/utils/storage";
-import { DoneTaskProvider, useDoneTask } from "./customContext";
+import { useDoneTask } from "./customContext";
+import { useRouter } from "next/navigation";
 
 export default function PageClient({
-  taskList,
+  taskArray,
+  index,
 }: {
-  taskList: {
-    next(): {
-      value: TaskType;
-      done: boolean;
-    };
-    current(): TaskType;
-    [Symbol.iterator]: () => IterableIterator<TaskType>;
-  };
+  taskArray: TaskType[];
+  index: number;
 }) {
   const [currentStep, setStep] = useState<"theory" | "practice">("theory");
   const [done, setDone] = useDoneTask();
+  const router = useRouter();
 
-  const task = taskList.current();
+  const task = taskArray[index];
 
   useEffect(() => {
-    console.log("Page client", done);
-    if (done) setDone(false);
+    if (!done) return;
+    setDone(false);
+    router.push(`/${encodeURI(taskArray[index + 1].name)}`);
   }, [done]);
 
-  if (currentStep === "theory")
+  if (currentStep === "theory" && task.video !== "__")
     return <Theory video={task.video} next={() => setStep("practice")} />;
   else return <Practice task={task} />;
 }
