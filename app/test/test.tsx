@@ -27,18 +27,20 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
 
   if (!task)
     return (
-      <main className={styles.main}>
-        <p>Done</p>
-        <Link href={"/"}>На главную</Link>
+      <main className={`${styles.main} ${styles.done}`}>
+        <div>
+          <p>Done</p>
+          <Link href={"/"}>На главную</Link>
+        </div>
       </main>
     );
   return (
     <main className={styles.main}>
       <div>
-        <p>{task.name}</p>
-        <p>{task.task}</p>
+        {/* <p>{task.name}</p> */}
+        <p className={styles.task}>{task.task}</p>
       </div>
-      <Field task={task} type="test" />
+      <Field className={styles.field} task={task} type="test" />
       <div className={styles.control}>
         <button
           onClick={() => (index === 0 ? router.back() : setIndex(index - 1))}

@@ -6,8 +6,8 @@
     "combination": ["H2SO4_верт", "Ф.Ф + NaOH", "H2SO4+ф.ф.+NaOH"]
   },
   "test": {
-    "centralObject": "Ф.Ф + NaOH",
+    "centralObject": "Ф.Ф+NaOH",
     "molecules": ["синий", "желтый", "белый", "красный"],
-    "correctCombination": ["цвет_белый"]
+    "correctCombination": ["белый"]
   }
 }

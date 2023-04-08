@@ -37,9 +37,11 @@ const colors = new Map(
 export default function Field({
   task,
   type,
+  className,
 }: {
   task: TaskType;
   type: "practice" | "test";
+  className?: string;
 }) {
   const selectedRef = useRef<HTMLDivElement | null>(null);
   const centralObjectRef = useRef<HTMLDivElement>(null);
@@ -133,7 +135,7 @@ export default function Field({
 
   return (
     <div
-      className={styles.field}
+      className={[styles.field, className].join(" ")}
       style={{
         gridTemplateRows: `repeat(${molecules.length / 2}, 1fr)`,
       }}

@@ -1,7 +1,16 @@
 .main {
   display: grid;
-
   grid-template-rows: auto 1fr auto;
+
+  &.done {
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
+  }
+}
+
+.field {
+  margin-block: 1rem;
 }
 
 .control {
@@ -10,4 +19,10 @@
   > * {
     flex: 1;
   }
+}
+
+.task {
+  height: 4rem;
+  font-size: 2rem;
+  text-align: center;
 }
