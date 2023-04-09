@@ -3,10 +3,11 @@
 import TaskType from "@/types/task";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Field from "../[task]/field";
+import Field from "../field";
 import styles from "./page.module.scss";
-import { useDoneTask } from "../[task]/customContext";
+import { useDoneTask } from "../customContext";
 import { useRouter } from "next/navigation";
+import storage from "@/utils/storage";
 
 export default function TestPage({ tasks }: { tasks: TaskType[] }) {
   const router = useRouter();
@@ -15,7 +16,6 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
   const [done, setDone] = useDoneTask();
 
   useEffect(() => {
-    console.log(done);
     if (!done) return;
     setIndex(index + 1);
     setDone(false);
@@ -25,12 +25,51 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
     setTask(tasks[index]);
   }, [index]);
 
+  useEffect(() => {
+    if (!task) return;
+
+    const onMouseEvent = (ev: MouseEvent) => {
+      let target: string | null = null;
+      if (ev.target)
+        target = (ev.target as HTMLElement)?.getAttribute("element");
+      storage.set(new Date().toISOString(), {
+        page: "practice",
+        taskName: task?.name,
+        screenX: ev.screenX,
+        screenY: ev.screenY,
+        target: target,
+        event: ev.type,
+      });
+    };
+
+    window.addEventListener("mousemove", onMouseEvent);
+    window.addEventListener("mousedown", onMouseEvent);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseEvent);
+      window.removeEventListener("mousedown", onMouseEvent);
+    };
+  }, [task]);
+
+  const anyToJSON = (obj: any) => JSON.stringify(Object.fromEntries(obj));
+
   if (!task)
     return (
       <main className={`${styles.main} ${styles.done}`}>
         <div>
           <p>Done</p>
-          <Link href={"/"}>На главную</Link>
+          <Link href={"/"} onClick={storage.clear}>
+            На главную
+          </Link>
+          <Link
+            href={URL.createObjectURL(
+              new Blob([anyToJSON(storage)], { type: "application/json" })
+            )}
+            download={`${new Date().toISOString()}.json`}
+            target="_blank"
+          >
+            Скачать логи
+          </Link>
         </div>
       </main>
     );

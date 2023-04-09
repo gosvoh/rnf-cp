@@ -56,6 +56,12 @@ export default function Field({
   else ({ molecules, correctCombination } = task.test);
 
   useEffect(() => {
+    return () => {
+      deselect();
+    };
+  }, []);
+
+  useEffect(() => {
     setCentralObject(task.test.centralObject);
     return () => {
       deselect();
@@ -102,6 +108,7 @@ export default function Field({
     else {
       if (selectedRef.current) {
         removeClassName(selectedRef, styles.highlight);
+        removeClassName(centralObjectRef, styles.highlight);
         switchImage(selectedRef.current, selectedMolecule as string);
       }
 
@@ -143,6 +150,7 @@ export default function Field({
       {molecules.map((molecule) => {
         return (
           <div
+            element={molecule}
             key={molecule}
             className={styles.molecule}
             aria-disabled={
@@ -159,6 +167,7 @@ export default function Field({
         );
       })}
       <div
+        element="центр"
         className={styles.flask}
         ref={centralObjectRef}
         onClick={flaskClick}

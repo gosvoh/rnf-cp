@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Theory from "./theory";
 import TaskType from "@/types/task";
 import Practice from "./practice";
-import storage from "@/utils/storage";
-import { useDoneTask } from "./customContext";
+import { useDoneTask, useStorage } from "../customContext";
 import { useRouter } from "next/navigation";
+import storage from "@/utils/storage";
 
 export default function PageClient({
   taskArray,
@@ -18,13 +18,42 @@ export default function PageClient({
   const [currentStep, setStep] = useState<"theory" | "practice">("theory");
   const [done, setDone] = useDoneTask();
   const router = useRouter();
+  const [strg, setStrg] = useStorage();
 
   const task = taskArray[index];
 
   useEffect(() => {
+    if (!task) return;
+
+    const onMouseEvent = (ev: MouseEvent) => {
+      let target: string | null = null;
+      if (ev.target)
+        target = (ev.target as HTMLElement)?.getAttribute("element");
+      storage.set(new Date().toISOString(), {
+        page: "practice",
+        taskName: task?.name,
+        screenX: ev.screenX,
+        screenY: ev.screenY,
+        target: target,
+        event: ev.type,
+      });
+    };
+
+    window.addEventListener("mousemove", onMouseEvent);
+    window.addEventListener("mousedown", onMouseEvent);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseEvent);
+      window.removeEventListener("mousedown", onMouseEvent);
+    };
+  }, [task]);
+
+  useEffect(() => {
     if (!done) return;
     setDone(false);
-    router.push(`/${encodeURI(taskArray[index + 1].name)}`);
+    if (taskArray[index + 1])
+      router.push(`/${encodeURI(taskArray[index + 1].name)}`);
+    else router.push("/logs");
   }, [done]);
 
   if (currentStep === "theory" && task.video !== "__")
