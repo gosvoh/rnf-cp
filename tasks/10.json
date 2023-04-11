@@ -3,7 +3,7 @@
   "task": "Что произойдёт с раствором NaOH + ф/ф, если к нему прилить кислоту?",
   "video": "10_видео",
   "practice": {
-    "combination": ["H2SO4_верт", "Ф.Ф + NaOH", "H2SO4+ф.ф.+NaOH"]
+    "combination": ["H2SO4_верт", "ф.ф_верт"]
   },
   "test": {
     "centralObject": "Ф.Ф+NaOH",

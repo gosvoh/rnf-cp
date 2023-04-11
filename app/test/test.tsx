@@ -17,8 +17,10 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
 
   useEffect(() => {
     if (!done) return;
-    setIndex(index + 1);
-    setDone(false);
+    setTimeout(() => {
+      setIndex(index + 1);
+      setDone(false);
+    }, 5000);
   }, [done]);
 
   useEffect(() => {
@@ -30,8 +32,12 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
 
     const onMouseEvent = (ev: MouseEvent) => {
       let target: string | null = null;
-      if (ev.target)
-        target = (ev.target as HTMLElement)?.getAttribute("element");
+      let HTMLTarget = ev.target as HTMLElement;
+      if (HTMLTarget) {
+        target = HTMLTarget.hasAttribute("element")
+          ? HTMLTarget.getAttribute("element")
+          : null;
+      }
       storage.set(new Date().toISOString(), {
         page: "practice",
         taskName: task?.name,

@@ -1,7 +1,5 @@
 .field {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
   gap: 0.25rem;
   grid-auto-flow: column;
   background-color: black;
@@ -17,6 +15,12 @@
     outline: 5px solid blue;
     outline-offset: -5px;
     cursor: pointer;
+  }
+
+  &.done {
+    outline: 5px solid green;
+    outline-offset: -5px;
+    cursor: not-allowed;
   }
 }
 

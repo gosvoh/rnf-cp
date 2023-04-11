@@ -1,15 +1,14 @@
 import TaskType from "@/types/task";
 import styles from "./field.module.scss";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useDoneTask } from "./customContext";
 
-function addClassName(ref: MutableRefObject<any>, style: string) {
-  ref.current.className = `${ref.current.className} ${style}`;
+function addClassName(ref: HTMLDivElement, style: string) {
+  ref.className = `${ref.className} ${style}`;
 }
 
-function removeClassName(ref: MutableRefObject<any>, style: string) {
-  ref.current.className = ref.current.className.replace(style, "").trim();
+function removeClassName(ref: HTMLDivElement, style: string) {
+  ref.className = ref.className.replace(style, "").trim();
 }
 
 function switchImage(element: HTMLDivElement, molecule: string) {
@@ -50,27 +49,52 @@ export default function Field({
   const [centralObject, setCentralObject] = useState<string>("Пробирка_пустая");
   const [done, setDone] = useDoneTask();
 
-  let molecules: string[], correctCombination: string[];
-  if (type === "practice")
+  let molecules: string[],
+    correctCombination: string[],
+    consumedObjects: string[] | undefined;
+  if (type === "practice") {
     molecules = correctCombination = task.practice.combination;
-  else ({ molecules, correctCombination } = task.test);
+    consumedObjects = task.practice.consumedObjects;
+  } else {
+    ({ molecules, correctCombination, consumedObjects } = task.test);
+  }
+
+  let lakmus = correctCombination.some((val) => val.includes("лакмус"));
 
   useEffect(() => {
     return () => {
       deselect();
+      setConsumedMolecules([]);
     };
   }, []);
 
   useEffect(() => {
-    setCentralObject(task.test.centralObject);
+    deselect();
+  }, [centralObject]);
+
+  useEffect(() => {
+    if (!done) return;
+    blockField(true);
+    if (centralObjectRef.current)
+      addClassName(centralObjectRef.current, styles.done);
+  }, [done]);
+
+  useEffect(() => {
+    if (type === "practice")
+      setCentralObject(task.practice.centralObject ?? "Пробирка_пустая");
+    if (type === "test") setCentralObject(task.test.centralObject);
+    blockField(false);
+    if (centralObjectRef.current)
+      removeClassName(centralObjectRef.current, styles.done);
     return () => {
       deselect();
     };
   }, [task]);
 
   useEffect(() => {
-    if (type === "practice") setCentralObject("Пробирка_пустая");
-    else setCentralObject(task.test.centralObject);
+    if (type === "practice")
+      setCentralObject(task.practice.centralObject ?? "Пробирка_пустая");
+    if (type === "test") setCentralObject(task.test.centralObject);
   }, [type]);
 
   useEffect(() => {
@@ -79,6 +103,17 @@ export default function Field({
   }, [centralObject]);
 
   useEffect(() => {
+    if (consumedMolecules.length === 0) return;
+
+    if (consumedObjects)
+      setCentralObject(
+        consumedObjects.find((val) => {
+          let el = consumedMolecules[0].split("_")[0];
+          return val.includes(el);
+        }) as string
+      );
+    else setCentralObject(consumedMolecules[0]);
+
     if (consumedMolecules.length !== correctCombination.length) return;
 
     let done = false;
@@ -96,35 +131,78 @@ export default function Field({
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     molecule: string
   ) {
-    if (!event.currentTarget || consumedMolecules.includes(molecule)) return;
+    if (
+      !event.currentTarget ||
+      event.currentTarget.ariaDisabled === "true" ||
+      consumedMolecules.includes(molecule) ||
+      !centralObjectRef.current
+    )
+      return;
+
+    if (lakmus) {
+      const target = event.currentTarget;
+
+      if (selectedRef.current && target !== selectedRef.current) {
+        switchImage(
+          selectedRef.current,
+          correctCombination.find((val) =>
+            val.toLowerCase().includes("лакмус")
+          ) as string
+        );
+        removeClassName(selectedRef.current, styles.highlight);
+        setDone(true);
+        return;
+      }
+
+      if (!molecule.toLowerCase().includes("лакмус")) return;
+
+      if (target.style.backgroundImage.toLowerCase().includes("лакмус_пачка")) {
+        switchImage(target, "Лакмус_шт");
+        return;
+      }
+      if (selectedRef.current) {
+        removeClassName(target, styles.highlight);
+        selectedRef.current = null;
+      } else {
+        addClassName(target, styles.highlight);
+        selectedRef.current = target;
+      }
+
+      return;
+    }
 
     if (correctCombination.length === 1) {
       setConsumedMolecules([...consumedMolecules, molecule]);
-
       return;
     }
 
     if (event.currentTarget === selectedRef.current) deselect();
     else {
       if (selectedRef.current) {
-        removeClassName(selectedRef, styles.highlight);
-        removeClassName(centralObjectRef, styles.highlight);
+        removeClassName(selectedRef.current, styles.highlight);
+        removeClassName(centralObjectRef.current, styles.highlight);
         switchImage(selectedRef.current, selectedMolecule as string);
       }
 
       selectedRef.current = event.currentTarget;
       switchImage(selectedRef.current, molecule);
-      addClassName(selectedRef, styles.highlight);
-      addClassName(centralObjectRef, styles.highlight);
+      addClassName(selectedRef.current, styles.highlight);
+      addClassName(centralObjectRef.current, styles.highlight);
       setSelectedMolecule(molecule);
     }
   }
 
-  function deselect() {
-    if (!selectedRef.current || !selectedMolecule) return;
+  function blockField(block: boolean) {
+    const elements = document.getElementsByClassName(styles.molecule);
+    [...elements].forEach((el) => (el.ariaDisabled = block.toString()));
+  }
 
-    removeClassName(selectedRef, styles.highlight);
-    removeClassName(centralObjectRef, styles.highlight);
+  function deselect() {
+    if (!selectedRef.current || !centralObjectRef.current || !selectedMolecule)
+      return;
+
+    removeClassName(selectedRef.current, styles.highlight);
+    removeClassName(centralObjectRef.current, styles.highlight);
 
     switchImage(selectedRef.current, selectedMolecule);
 
@@ -132,12 +210,15 @@ export default function Field({
     selectedRef.current = null;
   }
 
+  function isDisabled(molecule: string) {
+    let disabled = consumedMolecules.includes(molecule);
+    return disabled;
+  }
+
   function flaskClick() {
     if (!selectedMolecule || correctCombination.length === 1) return;
 
-    setCentralObject(selectedMolecule);
     setConsumedMolecules([...consumedMolecules, selectedMolecule]);
-    deselect();
   }
 
   return (
@@ -145,6 +226,7 @@ export default function Field({
       className={[styles.field, className].join(" ")}
       style={{
         gridTemplateRows: `repeat(${molecules.length / 2}, 1fr)`,
+        gridTemplateColumns: `repeat(${lakmus ? 2 : 3}, 1fr)`,
       }}
     >
       {molecules.map((molecule) => {
@@ -153,20 +235,25 @@ export default function Field({
             element={molecule}
             key={molecule}
             className={styles.molecule}
-            aria-disabled={
-              consumedMolecules.includes(molecule) && !colors.has(molecule)
-            }
+            aria-disabled={isDisabled(molecule)}
             onClick={(event) => select(event, molecule)}
             style={
               // TODO заменить background на Image
               colors.has(molecule)
                 ? { backgroundColor: colors.get(molecule) }
-                : { backgroundImage: `url("/assets/images/${molecule}.png")` }
+                : {
+                    backgroundImage: `url("/assets/images/${
+                      molecule.toLowerCase().includes("лакмус")
+                        ? "Лакмус_пачка"
+                        : molecule
+                    }.png")`,
+                  }
             }
           ></div>
         );
       })}
       <div
+        hidden={lakmus}
         element="центр"
         className={styles.flask}
         ref={centralObjectRef}

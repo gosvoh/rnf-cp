@@ -2,10 +2,6 @@
   display: grid;
 
   grid-template-rows: auto 1fr auto;
-
-  &:only-child {
-    grid-template-rows: 1fr;
-  }
 }
 
 .header {

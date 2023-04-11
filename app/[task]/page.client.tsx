@@ -15,10 +15,9 @@ export default function PageClient({
   taskArray: TaskType[];
   index: number;
 }) {
-  const [currentStep, setStep] = useState<"theory" | "practice">("theory");
+  const [currentStep, setStep] = useState<"theory" | "practice">("practice");
   const [done, setDone] = useDoneTask();
   const router = useRouter();
-  const [strg, setStrg] = useStorage();
 
   const task = taskArray[index];
 
@@ -27,8 +26,12 @@ export default function PageClient({
 
     const onMouseEvent = (ev: MouseEvent) => {
       let target: string | null = null;
-      if (ev.target)
-        target = (ev.target as HTMLElement)?.getAttribute("element");
+      let HTMLTarget = ev.target as HTMLElement;
+      if (HTMLTarget) {
+        target = HTMLTarget.hasAttribute("element")
+          ? HTMLTarget.getAttribute("element")
+          : null;
+      }
       storage.set(new Date().toISOString(), {
         page: "practice",
         taskName: task?.name,
@@ -51,9 +54,12 @@ export default function PageClient({
   useEffect(() => {
     if (!done) return;
     setDone(false);
-    if (taskArray[index + 1])
-      router.push(`/${encodeURI(taskArray[index + 1].name)}`);
-    else router.push("/logs");
+
+    setTimeout(() => {
+      if (taskArray[index + 1])
+        router.push(`/${encodeURI(taskArray[index + 1].name)}`);
+      else router.push("/logs");
+    }, 5000);
   }, [done]);
 
   if (currentStep === "theory" && task.video !== "__")

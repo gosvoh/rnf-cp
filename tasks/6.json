@@ -3,11 +3,11 @@
   "task": "При взаимодействии этих реагентов выделяется H2?",
   "video": "1_видео",
   "practice": {
-    "combination": ["HCl_верт", "Zn", "Zn+HCl"]
+    "combination": ["Zn_верт", "HCl_верт"]
   },
   "test": {
-    "centralObject": "Cu(OH)2+NaSO4",
-    "molecules": ["м.о_верт", "йод_верт", "HCl_верт", "Zn"],
-    "correctCombination": ["HCl_верт", "Zn"]
+    "centralObject": "Zn+HCl",
+    "molecules": ["м.о_верт", "йод_верт", "HCl_верт", "Zn_верт"],
+    "correctCombination": ["HCl_верт", "Zn_верт"]
   }
 }

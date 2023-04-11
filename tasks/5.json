@@ -3,7 +3,7 @@
   "task": "Какой из индикаторов становится желтым при взаимодействии с щёлочью?",
   "video": "__",
   "practice": {
-    "combination": ["м.о_верт", "NaOH_верт"]
+    "combination": ["NaOH_верт", "м.о_верт"]
   },
   "test": {
     "centralObject": "NaOH+м.о",

@@ -3,7 +3,7 @@
   "task": "При взаимодействии каких 2х реагентов образуется зелёный цвет?",
   "video": "7_видео",
   "practice": {
-    "combination": ["CuSO4_верт", "HCl_верт", "CuSO4+HCl"]
+    "combination": ["HCl_верт", "CuSO4_верт"]
   },
   "test": {
     "centralObject": "CuSO4+HCl",
