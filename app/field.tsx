@@ -1,6 +1,6 @@
 import TaskType from "@/types/task";
 import styles from "./field.module.scss";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDoneTask } from "./customContext";
 
 function addClassName(ref: HTMLDivElement, style: string) {
@@ -16,11 +16,13 @@ function switchImage(element: HTMLDivElement, molecule: string) {
   if (isDefault) {
     const tmp = molecule.split("_");
     tmp[1] = "налив";
-    element.style.backgroundImage = `url("/assets/images/${tmp.join(
-      "_"
+    element.style.backgroundImage = `url("/assets/images/${encodeURI(
+      tmp.join("_")
     )}.png")`;
   } else
-    element.style.backgroundImage = `url("/assets/images/${molecule}.png")`;
+    element.style.backgroundImage = `url("/assets/images/${encodeURI(
+      molecule
+    )}.png")`;
 }
 
 const colors = new Map(
@@ -242,11 +244,11 @@ export default function Field({
               colors.has(molecule)
                 ? { backgroundColor: colors.get(molecule) }
                 : {
-                    backgroundImage: `url("/assets/images/${
+                    backgroundImage: `url("/assets/images/${encodeURI(
                       molecule.toLowerCase().includes("лакмус")
                         ? "Лакмус_пачка"
                         : molecule
-                    }.png")`,
+                    )}.png")`,
                   }
             }
           ></div>
