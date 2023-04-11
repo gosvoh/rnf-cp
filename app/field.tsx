@@ -16,11 +16,11 @@ function switchImage(element: HTMLDivElement, molecule: string) {
   if (isDefault) {
     const tmp = molecule.split("_");
     tmp[1] = "налив";
-    element.style.backgroundImage = `url("/assets/images/${encodeURI(
+    element.style.backgroundImage = `url("/assets/images/${encodeURIComponent(
       tmp.join("_")
     )}.png")`;
   } else
-    element.style.backgroundImage = `url("/assets/images/${encodeURI(
+    element.style.backgroundImage = `url("/assets/images/${encodeURIComponent(
       molecule
     )}.png")`;
 }
@@ -244,7 +244,7 @@ export default function Field({
               colors.has(molecule)
                 ? { backgroundColor: colors.get(molecule) }
                 : {
-                    backgroundImage: `url("/assets/images/${encodeURI(
+                    backgroundImage: `url("/assets/images/${encodeURIComponent(
                       molecule.toLowerCase().includes("лакмус")
                         ? "Лакмус_пачка"
                         : molecule
