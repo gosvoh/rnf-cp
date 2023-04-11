@@ -101,7 +101,9 @@ export default function Field({
 
   useEffect(() => {
     if (!centralObjectRef.current) return;
-    centralObjectRef.current.style.backgroundImage = `url("/assets/images/${centralObject}.png")`;
+    centralObjectRef.current.style.backgroundImage = `url("/assets/images/${encodeURIComponent(
+      centralObject
+    )}.png")`;
   }, [centralObject]);
 
   useEffect(() => {
