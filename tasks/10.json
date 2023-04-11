@@ -6,7 +6,7 @@
     "combination": ["H2SO4_верт", "ф.ф_верт"]
   },
   "test": {
-    "centralObject": "Ф.Ф+NaOH",
+    "centralObject": "ф.ф+NaOH",
     "molecules": ["синий", "желтый", "белый", "красный"],
     "correctCombination": ["белый"]
   }
