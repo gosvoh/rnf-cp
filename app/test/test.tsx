@@ -39,7 +39,7 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
           : null;
       }
       storage.set(new Date().toISOString(), {
-        page: "practice",
+        page: "test",
         taskName: task?.name,
         screenX: ev.screenX,
         screenY: ev.screenY,
