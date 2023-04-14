@@ -12,7 +12,9 @@ function removeClassName(ref: HTMLDivElement, style: string) {
 }
 
 function switchImage(element: HTMLDivElement, molecule: string) {
-  const isDefault = element.style.backgroundImage.includes("_верт");
+  const isDefault = decodeURIComponent(element.style.backgroundImage).includes(
+    "_верт"
+  );
   if (isDefault) {
     const tmp = molecule.split("_");
     tmp[1] = "налив";
@@ -48,8 +50,11 @@ export default function Field({
   const centralObjectRef = useRef<HTMLDivElement>(null);
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
   const [consumedMolecules, setConsumedMolecules] = useState<string[]>([]);
-  const [centralObject, setCentralObject] = useState<string>("Пробирка_пустая");
+  const [centralObject, setCentralObject] = useState<string | null>(
+    "Пробирка_пустая"
+  );
   const [done, setDone] = useDoneTask();
+  const [isBlocked, setIsBlocked] = useState(false);
 
   let molecules: string[],
     correctCombination: string[],
@@ -71,12 +76,8 @@ export default function Field({
   }, []);
 
   useEffect(() => {
-    deselect();
-  }, [centralObject]);
-
-  useEffect(() => {
     if (!done) return;
-    blockField(true);
+    setIsBlocked(true);
     if (centralObjectRef.current)
       addClassName(centralObjectRef.current, styles.done);
   }, [done]);
@@ -85,7 +86,7 @@ export default function Field({
     if (type === "practice")
       setCentralObject(task.practice.centralObject ?? "Пробирка_пустая");
     if (type === "test") setCentralObject(task.test.centralObject);
-    blockField(false);
+    setIsBlocked(false);
     if (centralObjectRef.current)
       removeClassName(centralObjectRef.current, styles.done);
     return () => {
@@ -101,6 +102,10 @@ export default function Field({
 
   useEffect(() => {
     if (!centralObjectRef.current) return;
+    if (!centralObject) {
+      centralObjectRef.current.style.backgroundImage = "";
+      return;
+    }
     centralObjectRef.current.style.backgroundImage = `url("/assets/images/${encodeURIComponent(
       centralObject
     )}.png")`;
@@ -109,26 +114,45 @@ export default function Field({
   useEffect(() => {
     if (consumedMolecules.length === 0) return;
 
-    if (consumedObjects)
-      setCentralObject(
-        consumedObjects.find((val) => {
-          let el = consumedMolecules[0].split("_")[0];
-          return val.includes(el);
-        }) as string
-      );
-    else setCentralObject(consumedMolecules[0]);
+    if (consumedObjects) {
+      const found = consumedObjects.find((val) => {
+        let el = consumedMolecules[0].split("_")[0];
+        return val.includes(el);
+      }) as string;
+      if (found) setCentralObject(found);
+      else setCentralObject(consumedMolecules[0]);
+    } else setCentralObject(consumedMolecules[0]);
 
-    if (consumedMolecules.length !== correctCombination.length) return;
+    if (consumedMolecules.length !== correctCombination.length) {
+      deselect();
+      return;
+    }
 
     let done = false;
     if (consumedMolecules.every((value) => correctCombination.includes(value)))
       done = true;
 
     setConsumedMolecules([]);
-    setCentralObject(task.test.centralObject);
     deselect();
 
-    if (done) setDone(true);
+    if (done) {
+      setDone(true);
+      setCentralObject(task.test.centralObject);
+    } else {
+      setIsBlocked(true);
+      if (!centralObjectRef.current) return;
+      addClassName(centralObjectRef.current, styles.wrong);
+      setCentralObject(null);
+      centralObjectRef.current.innerText = "Попробуй ещё раз";
+
+      setTimeout(() => {
+        setIsBlocked(false);
+        if (!centralObjectRef.current) return;
+        removeClassName(centralObjectRef.current, styles.wrong);
+        setCentralObject(task.test.centralObject);
+        centralObjectRef.current.innerText = "";
+      }, 5000);
+    }
   }, [consumedMolecules]);
 
   function select(
@@ -160,7 +184,11 @@ export default function Field({
 
       if (!molecule.toLowerCase().includes("лакмус")) return;
 
-      if (target.style.backgroundImage.toLowerCase().includes("лакмус_пачка")) {
+      if (
+        decodeURIComponent(target.style.backgroundImage)
+          .toLowerCase()
+          .includes("лакмус_пачка")
+      ) {
         switchImage(target, "Лакмус_шт");
         return;
       }
@@ -169,6 +197,14 @@ export default function Field({
         selectedRef.current = null;
       } else {
         addClassName(target, styles.highlight);
+        addClassName(
+          (
+            [...document.getElementsByClassName("molecule")] as HTMLDivElement[]
+          ).find((val) => {
+            val !== target;
+          }) as HTMLDivElement,
+          styles.highlightBlue
+        );
         selectedRef.current = target;
       }
 
@@ -194,11 +230,6 @@ export default function Field({
       addClassName(centralObjectRef.current, styles.highlight);
       setSelectedMolecule(molecule);
     }
-  }
-
-  function blockField(block: boolean) {
-    const elements = document.getElementsByClassName(styles.molecule);
-    [...elements].forEach((el) => (el.ariaDisabled = block.toString()));
   }
 
   function deselect() {
@@ -239,7 +270,7 @@ export default function Field({
             element={molecule}
             key={molecule}
             className={styles.molecule}
-            aria-disabled={isDisabled(molecule)}
+            aria-disabled={isDisabled(molecule) || isBlocked}
             onClick={(event) => select(event, molecule)}
             style={
               // TODO заменить background на Image

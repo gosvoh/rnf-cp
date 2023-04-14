@@ -9,7 +9,10 @@
 
 .flask {
   grid-area: 1 / 2 / -1 / -2;
-  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
 
   &.highlight {
     outline: 5px solid blue;
@@ -19,6 +22,12 @@
 
   &.done {
     outline: 5px solid green;
+    outline-offset: -5px;
+    cursor: not-allowed;
+  }
+
+  &.wrong {
+    outline: 5px solid red;
     outline-offset: -5px;
     cursor: not-allowed;
   }
@@ -41,8 +50,14 @@
   position: relative;
 
   &.highlight {
-    outline: 5px solid red;
+    outline: 5px solid gray;
     outline-offset: -5px;
+  }
+
+  &.highlightBlue {
+    outline: 5px solid blue;
+    outline-offset: -5px;
+    cursor: pointer;
   }
 
   * {

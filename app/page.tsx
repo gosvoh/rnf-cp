@@ -11,7 +11,9 @@ export default function Home() {
         {tasks.map((value) => {
           return (
             <li key={value.name}>
-              <Link href={`/${value.name}`}>{value.name}</Link>
+              <Link href={`/${value.name}`} prefetch={false}>
+                {value.name}
+              </Link>
             </li>
           );
         })}

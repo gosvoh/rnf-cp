@@ -81,8 +81,10 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
     );
   return (
     <main className={styles.main}>
-      <div>
-        {/* <p>{task.name}</p> */}
+      <div className={styles.header}>
+        <p>
+          {index + 1}/{tasks.length}
+        </p>
         <p className={styles.task}>{task.task}</p>
       </div>
       <Field className={styles.field} task={task} type="test" />
