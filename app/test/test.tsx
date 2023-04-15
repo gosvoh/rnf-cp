@@ -1,7 +1,6 @@
 "use client";
 
 import TaskType from "@/types/task";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import Field from "../field";
 import styles from "./page.module.scss";
@@ -28,7 +27,10 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
   }, [index]);
 
   useEffect(() => {
-    if (!task) return;
+    if (!task) {
+      router.push("/logs");
+      return;
+    }
 
     const onMouseEvent = (ev: MouseEvent) => {
       let target: string | null = null;
@@ -59,48 +61,23 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
 
   const anyToJSON = (obj: any) => JSON.stringify(Object.fromEntries(obj));
 
-  if (!task) router.push("/logs");
-  //   <main className={`${styles.main} ${styles.done}`}>
-  //     <div>
-  //       <p>Done</p>
-  //       <Link
-  //         href={"/"}
-  //         onClick={() => {
-  //           storage.clear();
-  //         }}
-  //       >
-  //         На главную
-  //       </Link>
-  //       <Link
-  //         href={URL.createObjectURL(
-  //           new Blob([anyToJSON(storage)], { type: "application/json" })
-  //         )}
-  //         download={`${new Date().toISOString()}.json`}
-  //         target="_blank"
-  //       >
-  //         Скачать логи
-  //       </Link>
-  //     </div>
-  //   </main>
-  // );
-  else
-    return (
-      <main className={styles.main}>
-        <div className={styles.header}>
-          <p>
-            {index + 1}/{tasks.length}
-          </p>
-          <p className={styles.task}>{task.task}</p>
-        </div>
-        <Field className={styles.field} task={task} type="test" />
-        <div className={styles.control}>
-          <button
-            onClick={() => (index === 0 ? router.back() : setIndex(index - 1))}
-          >
-            Back
-          </button>
-          <button onClick={() => setIndex(index + 1)}>Next</button>
-        </div>
-      </main>
-    );
+  return (
+    <main className={styles.main}>
+      <div className={styles.header}>
+        <p>
+          {index + 1}/{tasks.length}
+        </p>
+        <p className={styles.task}>{task?.task}</p>
+      </div>
+      {task ? <Field className={styles.field} task={task} type="test" /> : null}
+      <div className={styles.control}>
+        <button
+          onClick={() => (index === 0 ? router.back() : setIndex(index - 1))}
+        >
+          Back
+        </button>
+        <button onClick={() => setIndex(index + 1)}>Next</button>
+      </div>
+    </main>
+  );
 }
