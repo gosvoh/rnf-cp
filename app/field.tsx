@@ -66,7 +66,9 @@ export default function Field({
     ({ molecules, correctCombination, consumedObjects } = task.test);
   }
 
-  let lakmus = correctCombination.some((val) => val.includes("лакмус"));
+  let lakmus = correctCombination.some((val) =>
+    val.toLowerCase().includes("лакмус")
+  );
 
   useEffect(() => {
     return () => {
@@ -78,13 +80,22 @@ export default function Field({
   useEffect(() => {
     if (!done) return;
     setIsBlocked(true);
-    if (centralObjectRef.current)
-      addClassName(centralObjectRef.current, styles.done);
+    let mols = document.getElementsByClassName(
+      styles.molecule
+    ) as HTMLCollectionOf<HTMLDivElement>;
+    [...mols].forEach((mol) => {
+      if (correctCombination.includes(mol.getAttribute("element") as string))
+        addClassName(mol, styles.done);
+    });
   }, [done]);
 
   useEffect(() => {
     if (type === "practice")
-      setCentralObject(task.practice.centralObject ?? "Пробирка_пустая");
+      setCentralObject(
+        task.practice.centralObject ??
+          task.practice.finalObject ??
+          "Пробирка_пустая"
+      );
     if (type === "test") setCentralObject(task.test.centralObject);
     setIsBlocked(false);
     if (centralObjectRef.current)
@@ -137,7 +148,9 @@ export default function Field({
 
     if (done) {
       setDone(true);
-      setCentralObject(task.test.centralObject);
+      if (type === "practice")
+        setCentralObject(task.practice.finalObject ?? task.test.centralObject);
+      else setCentralObject(task.test.centralObject);
     } else {
       setIsBlocked(true);
       if (!centralObjectRef.current) return;
@@ -162,8 +175,7 @@ export default function Field({
     if (
       !event.currentTarget ||
       event.currentTarget.ariaDisabled === "true" ||
-      consumedMolecules.includes(molecule) ||
-      !centralObjectRef.current
+      consumedMolecules.includes(molecule)
     )
       return;
 
@@ -197,14 +209,13 @@ export default function Field({
         selectedRef.current = null;
       } else {
         addClassName(target, styles.highlight);
-        addClassName(
-          (
-            [...document.getElementsByClassName("molecule")] as HTMLDivElement[]
-          ).find((val) => {
-            val !== target;
-          }) as HTMLDivElement,
-          styles.highlightBlue
-        );
+        let found = [
+          ...(document.getElementsByClassName(
+            styles.molecule
+          ) as HTMLCollectionOf<HTMLDivElement>),
+        ].find((val) => val !== target);
+        // @ts-ignore
+        addClassName(found, styles.highlightBlue);
         selectedRef.current = target;
       }
 
@@ -220,6 +231,7 @@ export default function Field({
     else {
       if (selectedRef.current) {
         removeClassName(selectedRef.current, styles.highlight);
+        // @ts-ignore
         removeClassName(centralObjectRef.current, styles.highlight);
         switchImage(selectedRef.current, selectedMolecule as string);
       }
@@ -227,6 +239,7 @@ export default function Field({
       selectedRef.current = event.currentTarget;
       switchImage(selectedRef.current, molecule);
       addClassName(selectedRef.current, styles.highlight);
+      // @ts-ignore
       addClassName(centralObjectRef.current, styles.highlight);
       setSelectedMolecule(molecule);
     }
@@ -245,10 +258,7 @@ export default function Field({
     selectedRef.current = null;
   }
 
-  function isDisabled(molecule: string) {
-    let disabled = consumedMolecules.includes(molecule);
-    return disabled;
-  }
+  const isConsumed = (molecule: string) => consumedMolecules.includes(molecule);
 
   function flaskClick() {
     if (!selectedMolecule || correctCombination.length === 1) return;
@@ -270,7 +280,7 @@ export default function Field({
             element={molecule}
             key={molecule}
             className={styles.molecule}
-            aria-disabled={isDisabled(molecule) || isBlocked}
+            aria-disabled={isConsumed(molecule) || isBlocked}
             onClick={(event) => select(event, molecule)}
             style={
               // TODO заменить background на Image
@@ -284,16 +294,20 @@ export default function Field({
                     )}.png")`,
                   }
             }
-          ></div>
+          >
+            {/* {molecule.split("_")[0]} */}
+          </div>
         );
       })}
-      <div
-        hidden={lakmus}
-        element="центр"
-        className={styles.flask}
-        ref={centralObjectRef}
-        onClick={flaskClick}
-      ></div>
+      {lakmus ? null : (
+        <div
+          element="центр"
+          className={styles.flask}
+          ref={centralObjectRef}
+          onClick={flaskClick}
+          aria-disabled={isBlocked}
+        ></div>
+      )}
     </div>
   );
 }

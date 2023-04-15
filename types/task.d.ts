@@ -5,6 +5,7 @@ type TaskType = {
   practice: {
     combination: string[];
     centralObject?: string;
+    finalObject?: string;
     consumedObjects?: string[];
   };
   test: {

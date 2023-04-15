@@ -1,4 +1,38 @@
 .video {
   aspect-ratio: 16/9;
   width: 100%;
+  background-color: black;
+
+  video {
+    width: 100%;
+
+    &.paused {
+      opacity: 0.25;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  position: relative;
+}
+
+.buttons {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-auto-flow: column;
+  gap: 2rem;
+}
+
+.button {
+  color: white;
+  border: none;
+  background: none;
+  font-size: 8rem;
+
+  &:hover {
+    cursor: pointer;
+  }
 }

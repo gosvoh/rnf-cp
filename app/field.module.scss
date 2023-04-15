@@ -5,6 +5,10 @@
   background-color: black;
   outline: 1px solid grey;
   outline-offset: 5px;
+
+  * {
+    user-select: none;
+  }
 }
 
 .flask {
@@ -20,12 +24,6 @@
     cursor: pointer;
   }
 
-  &.done {
-    outline: 5px solid green;
-    outline-offset: -5px;
-    cursor: not-allowed;
-  }
-
   &.wrong {
     outline: 5px solid red;
     outline-offset: -5px;
@@ -39,10 +37,14 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-color: white;
+
+  &[aria-disabled="true"] {
+    cursor: not-allowed !important;
+  }
 }
 
 .molecule {
-  color: white;
+  color: red;
   cursor: pointer;
   display: grid;
   align-items: center;
@@ -60,12 +62,13 @@
     cursor: pointer;
   }
 
-  * {
-    user-select: none;
+  &[aria-disabled="true"] {
+    opacity: 0.5;
   }
 
-  &[aria-disabled="true"] {
-    cursor: not-allowed;
-    opacity: 0.5;
+  &.done {
+    outline: 5px solid green;
+    outline-offset: -5px;
+    opacity: 1;
   }
 }
