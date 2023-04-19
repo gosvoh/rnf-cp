@@ -7,7 +7,7 @@
   },
   "test": {
     "centralObject": "Cu(OH)2+NaSO4",
-    "molecules": ["крахмал_верт", "NaOH_верт", "H2O2_верт", "CuSO4_верт"],
+    "molecules": ["крахмал_верт", "NaOH_верт", "H2O2л_верт", "CuSO4_верт"],
     "correctCombination": ["NaOH_верт", "CuSO4_верт"]
   }
 }

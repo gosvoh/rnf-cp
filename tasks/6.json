@@ -7,7 +7,7 @@
   },
   "test": {
     "centralObject": "Zn+HCl",
-    "molecules": ["м.о_верт", "йод_верт", "HCl_верт", "Zn_верт"],
+    "molecules": ["м.оп_верт", "йод_верт", "HCl_верт", "Zn_верт"],
     "correctCombination": ["HCl_верт", "Zn_верт"]
   }
 }
