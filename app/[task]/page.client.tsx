@@ -15,7 +15,7 @@ export default function PageClient({
   taskArray: TaskType[];
   index: number;
 }) {
-  const [currentStep, setStep] = useState<"theory" | "practice">("practice");
+  const [currentStep, setStep] = useState<"theory" | "practice">("theory");
   const [done, setDone] = useDoneTask();
   const router = useRouter();
 
