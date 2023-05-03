@@ -18,6 +18,13 @@
   justify-content: center;
   font-size: 2rem;
 
+  p {
+    background-color: white;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    outline: 1px solid black;
+  }
+
   &.highlight {
     outline: 5px solid blue;
     outline-offset: -5px;

@@ -80,13 +80,10 @@ export default function Field({
   useEffect(() => {
     if (!done) return;
     setIsBlocked(true);
-    let mols = document.getElementsByClassName(
-      styles.molecule
-    ) as HTMLCollectionOf<HTMLDivElement>;
-    [...mols].forEach((mol) => {
-      if (correctCombination.includes(mol.getAttribute("element") as string))
-        addClassName(mol, styles.done);
-    });
+    if (centralObjectRef.current)
+      centralObjectRef.current.innerHTML = `<p>${
+        ["Молодец", "Отлично", "Так держать"][Math.ceil(Math.random() * 2)]
+      }</p>`;
   }, [done]);
 
   useEffect(() => {
@@ -102,6 +99,7 @@ export default function Field({
       removeClassName(centralObjectRef.current, styles.done);
     return () => {
       deselect();
+      if (centralObjectRef.current) centralObjectRef.current.innerHTML = "";
     };
   }, [task]);
 
@@ -156,14 +154,18 @@ export default function Field({
       if (!centralObjectRef.current) return;
       addClassName(centralObjectRef.current, styles.wrong);
       setCentralObject(null);
-      centralObjectRef.current.innerText = "Попробуй ещё раз";
+      centralObjectRef.current.innerHTML = `<p>${
+        ["Попробуй ещё раз", "Давай ещё раз", "Неверно"][
+          Math.round(Math.random() * 2)
+        ]
+      }</p>`;
 
       setTimeout(() => {
         setIsBlocked(false);
         if (!centralObjectRef.current) return;
         removeClassName(centralObjectRef.current, styles.wrong);
         setCentralObject(task.test.centralObject);
-        centralObjectRef.current.innerText = "";
+        centralObjectRef.current.innerHTML = "";
       }, 5000);
     }
   }, [consumedMolecules]);
@@ -279,7 +281,12 @@ export default function Field({
           <div
             element={molecule}
             key={molecule}
-            className={styles.molecule}
+            className={[
+              styles.molecule,
+              done && correctCombination.includes(molecule) && styles.done,
+            ]
+              .filter(Boolean)
+              .join(" ")}
             aria-disabled={isConsumed(molecule) || isBlocked}
             onClick={(event) => select(event, molecule)}
             style={

@@ -62,7 +62,16 @@ export default function PageClient({
     }, 5000);
   }, [done]);
 
-  if (currentStep === "theory" && task.video !== "__")
-    return <Theory video={task.video} next={() => setStep("practice")} />;
-  else return <Practice task={task} />;
+  return (
+    <>
+      <p style={{ marginBottom: "1rem" }}>{`${index + 1}/${
+        taskArray.length
+      }`}</p>
+      {currentStep === "theory" && task.video !== "__" ? (
+        <Theory video={task.video} next={() => setStep("practice")} />
+      ) : (
+        <Practice task={task} />
+      )}
+    </>
+  );
 }

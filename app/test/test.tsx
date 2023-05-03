@@ -59,8 +59,6 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
     };
   }, [task]);
 
-  const anyToJSON = (obj: any) => JSON.stringify(Object.fromEntries(obj));
-
   return (
     <main className={styles.main}>
       <div className={styles.header}>
@@ -70,7 +68,7 @@ export default function TestPage({ tasks }: { tasks: TaskType[] }) {
         <p className={styles.task}>{task?.task}</p>
       </div>
       {task ? <Field className={styles.field} task={task} type="test" /> : null}
-      <div className={styles.control}>
+      <div className={styles.control} style={{ display: "none" }}>
         <button
           onClick={() => (index === 0 ? router.back() : setIndex(index - 1))}
         >

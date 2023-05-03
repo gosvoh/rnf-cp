@@ -23,7 +23,8 @@
   inset: 0;
   display: grid;
   grid-auto-flow: column;
-  gap: 2rem;
+  gap: 2.5rem;
+  padding: 2.5rem;
 }
 
 .button {
@@ -31,6 +32,8 @@
   border: none;
   background: none;
   font-size: 8rem;
+  border: 2px solid white;
+  border-radius: 0.75rem;
 
   &:hover {
     cursor: pointer;
