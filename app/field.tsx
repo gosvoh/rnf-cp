@@ -66,7 +66,7 @@ export default function Field({
     ({ molecules, correctCombination, consumedObjects } = task.test);
   }
 
-  let lakmus = correctCombination.some((val) =>
+  const lakmus = correctCombination.some((val) =>
     val.toLowerCase().includes("лакмус")
   );
 

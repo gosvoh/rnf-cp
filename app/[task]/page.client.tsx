@@ -53,9 +53,9 @@ export default function PageClient({
 
   useEffect(() => {
     if (!done) return;
-    setDone(false);
 
     setTimeout(() => {
+      setDone(false);
       if (taskArray[index + 1])
         router.push(`/${encodeURI(taskArray[index + 1].name)}`);
       else router.push("/logs");
