@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import naturalSort from "typescript-natural-sort";
 
-export default function getTasks() {
+function getTasks() {
   const dirPath = `${path.resolve(process.cwd(), "tasks")}/`;
   const fileNames = readdirSync(dirPath).sort(naturalSort);
   const ret: TaskType[] = [];

@@ -3,6 +3,9 @@ import "./globals.scss";
 export const metadata = {
   title: "РНФ ДЦП",
   description: "",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
