@@ -2,6 +2,10 @@
   "name": "rnf-cp",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gosvoh/rnf-cp.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
