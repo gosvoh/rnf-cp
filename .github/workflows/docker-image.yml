@@ -25,3 +25,9 @@ jobs:
           registry: docker.io
           username: gosvoh
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: HTTP Request Action
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.DOCKERHUB_TOKEN }}
+          method: POST
