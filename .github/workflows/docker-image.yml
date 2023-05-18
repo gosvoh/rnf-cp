@@ -20,7 +20,7 @@ jobs:
       - name: Docker Build & Push Action
         uses: mr-smithers-excellent/docker-build-push@v6.2
         with:
-          image: gosvoh/ched
+          image: gosvoh/rnf-cp
           tags: ${{ env.PACKAGE_VERSION }}, latest
           registry: docker.io
           username: gosvoh
