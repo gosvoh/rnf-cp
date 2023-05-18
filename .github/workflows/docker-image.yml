@@ -29,5 +29,5 @@ jobs:
       - name: HTTP Request Action
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ secrets.DOCKERHUB_TOKEN }}
+          url: ${{ secrets.WEBHOOK }}
           method: POST
