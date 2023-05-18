@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Get current package version
+        uses: nyaa8/package-version@v1.0.3
+
+      - name: Docker Build & Push Action
+        uses: mr-smithers-excellent/docker-build-push@v6.2
+        with:
+          image: gosvoh/ched
+          tags: ${{ env.PACKAGE_VERSION }}, latest
+          registry: docker.io
+          username: gosvoh
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
