@@ -26,8 +26,12 @@ jobs:
           username: gosvoh
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  post:
+    runs-on: ubuntu-latest
+    steps:
       - name: HTTP Request Action
         uses: fjogeleit/http-request-action@v1
         with:
           url: ${{ secrets.WEBHOOK }}
           method: POST
+          timeout: 15000
